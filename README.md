@@ -2,6 +2,8 @@
 This project uses Python, PySpark, and Kafka to analyze the sentiments of a Twitter topic. Input the topic that you want to know the reception of, and receive the sentiment status of it!
 
 ## Configuration
+Required modules: `pykafka`, `tweepy`, `afinn`.
+
 To run, first create a Twitter API account [here](https://developer.twitter.com/en/apply-for-access), obtain the necessary keys, and place them in `config.cfg` as below.
 
 ```

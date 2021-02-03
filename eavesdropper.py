@@ -1,8 +1,5 @@
-import tweepy
-import json
 import pykafka
-import sys
-import afinn
+import json
 
 class Eavesdropper:
     def __init__(self):
@@ -19,12 +16,3 @@ class Eavesdropper:
     def on_error(self, status):
         print(status)
         return True
-
-if __name__ == "__main__":
-    word = sys.argv[1]
-
-    # afinn object for sentiment analysis
-    afinn = Afinn()
-
-    twitter_stream = tweepy.Stream(auth, Eavesdropper())
-    twitter_stream.filter(languages = ['en'], track = [word])

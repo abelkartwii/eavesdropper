@@ -1,5 +1,8 @@
+import sys
 import pykafka
 import json
+from afinn import Afinn
+from tweepy import OAuthHandler, Stream, StreamListener
 
 class Eavesdropper:
     def __init__(self):
@@ -10,6 +13,7 @@ class Eavesdropper:
         try:
             json_data = json.loads(data)
             send_data = '{}'
+            json_send_data = json.loads(send_data)
         except KeyError:
             return True
     

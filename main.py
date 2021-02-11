@@ -15,7 +15,7 @@ access_secret = config['access_secret']
 
 def main():
     args = parser.parse_args()
-    afinn = Afinn()
+    afinn = afinn.Afinn()
     twitter_stream = tweepy.Stream(auth, Eavesdropper())
     twitter_stream.filter(languages = ['en'], track = [word])
 

@@ -13,9 +13,9 @@ access_token = <insert your access token here>
 access_secret = <insert your access secret here>
 ```
 
-You will need to start an Apache Kafka server. Download the latest version [here](https://kafka.apache.org/downloads). On the command line, run the following to start the server:
+You will need to start an Apache Kafka server. Download the latest version [here](https://kafka.apache.org/downloads). On the Windows command line, run the following to start the server:
 ```
-/bin/kafka-server-start.sh /config/server.properties
+.\bin\windows\kafka-server-start.bat .\config\server\properties
 ```
 
 Then, run `eavesdropper.py` in your Spark directory with your desired topic in quotes. This will fetch the data from the Twitter API:

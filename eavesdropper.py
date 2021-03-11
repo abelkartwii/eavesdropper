@@ -2,11 +2,13 @@ import sys
 import pykafka
 import json
 import afinn
+import tweepy
 from afinn import Afinn
 from tweepy import OAuthHandler, Stream, StreamListener
 
 class Eavesdropper:
     def __init__(self):
+        print("Publishing data to topic: " + topic)
         self.client = pykafka.KafkaClient("localhost:9092")
         self.producer = self.client.topics[bytes('twitter', 'ascii')].get_producer()
 

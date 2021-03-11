@@ -27,7 +27,7 @@ if __name__ == "__main__":
         .getOrCreate())
 
     # read streaming query from kafka, 
-    # subscribe to topic "twitter"
+    # subscribe to topics "twitter"
     kafka_dframe = (spark
         .readStream
         .format("kafka")

@@ -1,40 +1,38 @@
 import tweepy
 import json
 import sys
-from afinn import Afinn
-import configparser
 import argparse
 from pathlib import Path
-from tweepy import OAuthHandler
+from tweepy import OAuthHandler, Stream
 from eavesdropper import Eavesdropper
+from configparser import ConfigParser
 
 parser = argparse.ArgumentParser(description = 'Analyze a Twitter topic!')
 
 def main():
     # processes twitter API keys
-    auth = OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_secret)
+    auth_keys = OAuthHandler(consumer_key, consumer_secret)
+    auth_keys.set_access_token(access_token, access_secret)
 
     # parses command line arguments and language
     args = parser.parse_args()
-    word = [str(args.topic)]
+    word = str(args.topic)
     language = ['en']
 
-    # parses sentiments
-    afinn = Afinn()
-
     # creates a twitter stream to filter based on argument
-    twitter_stream = Stream(auth, Eavesdropper())
+    # connects to kafka using Eavesdropper object
+    twitter_stream = Stream(auth = auth_keys, 
+                            listener = Eavesdropper(topic = str(args.topic)))
     twitter_stream.filter(languages = language, track = word)
 
 if __name__ == "__main__":
     # reads config files for twitter API keys
-    config = configparser.ConfigParser()
+    config = ConfigParser()
     config.read_file(open(f"{Path(__file__).parents[0]}/config.cfg"))
-    consumer_key = config['keys']['consumer_key']
-    consumer_secret = config['keys']['consumer_secret']
-    access_token = config['keys']['access_token']
-    access_secret = config['keys']['access_secret']
+    consumer_key = config['twitter']['consumer_key']
+    consumer_secret = config['twitter']['consumer_secret']
+    access_token = config['twitter']['access_token']
+    access_secret = config['twitter']['access_secret']
 
     # argument parser
     parser._action_groups.pop()

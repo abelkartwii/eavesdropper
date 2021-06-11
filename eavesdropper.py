@@ -27,19 +27,21 @@ class Eavesdropper(StreamListener):
         print("Loading data...")
         json_data = json.loads(data)
         print(json_data['text'])
-        if json_data['text']:
-            tweet_data = {'created_at' : json_data['created_at'],
-                          'expanded_url' : json_data['entities']['urls'][0]['expanded_url']}
-            data = json.dumps(tweet_data)
-            self.producer.produce(bytes(data, "ascii"))
+
+        try json_data.get['coordinates']:
+            self.producer.send("eavesdropper", json_data.encode('utf-8'))
+            # tweet_data = {'created_at' : json_data['created_at'],
+            #              'expanded_url' : json_data['entities']['urls'][0]['expanded_url']}
+            # data = json.dumps(tweet_data)
+            # self.producer.produce(bytes(data, "ascii"))
             print(data)
             return True
 
-        if KeyError:
+        except KeyError:
             print("Key error -- no data detected")
             return False
 
-        if Exception:
+        except Exception:
             print("No data detected -- try again")
             return False
     

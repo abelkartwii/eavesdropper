@@ -18,12 +18,13 @@ def main():
     args = parser.parse_args()
     word = str(args.topic)
     language = ['en']
+    jakarta = [-6.1249, 106.6668, -6.3048, 106.9571]
 
     # creates a twitter stream to filter based on argument
     # connects to kafka using Eavesdropper object
     twitter_stream = Stream(auth = auth_keys, 
                             listener = Eavesdropper(topic = str(args.topic)))
-    twitter_stream.filter(languages = language, track = word)
+    twitter_stream.filter(languages = language, track = word, locations = jakarta)
 
 if __name__ == "__main__":
     # reads config files for twitter API keys

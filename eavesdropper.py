@@ -1,42 +1,63 @@
 import sys
-import pykafka
 import json
 import afinn
 import tweepy
-from afinn import Afinn
+import kafkaProducer
+# from pykafka import KafkaClient, Producer, Cluster, Broker
 from tweepy import OAuthHandler, Stream, StreamListener
 
-class Eavesdropper:
-    def __init__(self):
-        print("Publishing data to topic: " + topic)
-        self.client = pykafka.KafkaClient("localhost:9092")
-        self.producer = self.client.topics[bytes('twitter', 'ascii')].get_producer()
+class Eavesdropper(StreamListener):
+    def __init__(self, topic):
+        self.topic = topic
+        print(f"Creating a Kafka topic for {topic}...")
+        self.producer = kafkaProducer
+
+    """
+    def __init__(self, topic):
+        self.topic = topic
+        print(f"Publishing data to topic: {topic}")
+        self.broker = Broker(id_ = 1, host = "localhost", port = 9092, handler = "RequestHandler", socket_timeout_ms = 10000, offsets_channel_socket_timeout_ms = 10000)
+        self.client = KafkaClient("localhost:9092")
+        self.cluster = Cluster(hosts = "localhost:9092", handler = "RequestHandler")
+        self.producer = Producer(cluster = cluster, topic = topic)
+        # self.client.topics[bytes('twitter', 'ascii')].get_producer()
+    """
 
     def on_data(self, data):
-        try:
-            json_data = json.loads(data)
-            send_data = '{}'
-            json_send_data = json.loads(send_data)
-            json_send_data['text'] = json_data['text']
-            json_send_data['senti_val'] = afinn.score(json_data['text'])
+        print("Loading data...")
+        json_data = json.loads(data)
+        print(json_data['text'])
 
-            print(json_send_data['text'], ">>>", json_send_data['senti_val'])
-
-            self.producer.produce(bytes(json.dumps(json_send_data), 'ascii'))
-
+        try json_data.get['coordinates']:
+            self.producer.send("eavesdropper", json_data.encode('utf-8'))
+            # tweet_data = {'created_at' : json_data['created_at'],
+            #              'expanded_url' : json_data['entities']['urls'][0]['expanded_url']}
+            # data = json.dumps(tweet_data)
+            # self.producer.produce(bytes(data, "ascii"))
+            print(data)
             return True
 
         except KeyError:
-            return True
+            print("Key error -- no data detected")
+            return False
+
+        except Exception:
+            print("No data detected -- try again")
+            return False
     
+    def on_status(self, status):
+        print(status.text)
+
     def on_error(self, status):
-        print(status)
-        return True
+        if status == 420:
+            print("Too many attempts - please wait")
+        return False # disconnects stream
 
     def on_exception(self, status):
         print(status)
         return True
 
+"""
     def on_connect(self):
         print("Connected to Twitter!")
-        return True
+"""

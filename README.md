@@ -5,17 +5,17 @@ This project uses Kafka, Spark, and Flask to analyze and store the sentiments of
 (For developing purposes, I will use Jakarta as my location)
 
 ## Workflow
-**1. Ingest Twitter stream (Twitter Streams / Kafka)**
+#### 1. Ingest Twitter stream (Twitter Streams / Kafka)
 Using the `tweepy` Python module, tweets from the selected location will be pulled as JSON objects and inserted into an event stream that will be the input to three separate Kafka topics, which are:
 
 1. a topic containing all tweets about the trend made in a certain location that are *geotagged* with precise coordinates (where the user has tweeted with GPS enabled)
 2. a topic containing all tweets about the trend made in a certain location
 3. a topic containing all tweets about the trend in the location's country, which is used to compare the differences in sentiment between locations. 
 
-**2. Process Kafka topics (Kafka / Spark)**
+#### 2. Process Kafka topics (Kafka / Spark
 The three Kafka topics in the first stage are then processed in this stage using Spark to create dataframes with a running total of tweets. Using the `textblob` Python module, this stage will create a new Kafka event stream (topic) of coordinates and sentiment levels, which will be published to the frontend at 15-second intervals.
 
-**3. Front-end visualization (to-do)**
+#### 3. Front-end visualization (to-do)
 This stage uses Flask to consume data from Spark and the Kafka sentiment event stream.
 
 ## Configuration and Setup
@@ -37,11 +37,8 @@ docker-compose up
 Kafka (and Zookeeper) and Spark will be installed in the container's root directory through this process.
 
 ## License
-This theme uses the [MIT license](https://choosealicense.com/licenses/mit/).
+This project uses the [MIT license](https://choosealicense.com/licenses/mit/).
 
-
-
-'''
 <!-- Run `eavesdropper.py` in your Spark directory with your desired topic in quotes. This will fetch the data from the Twitter API for Rina Sawayama:
 ```
 python bin/spark-submit eavesdropper.py "Rina Sawayama"
@@ -100,4 +97,3 @@ You will also need to start Cassandra, which can be done by running the followin
 ```
 
 ## Approach -->
-'''

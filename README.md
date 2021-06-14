@@ -12,7 +12,7 @@ Using the `tweepy` Python module, tweets from the selected location will be pull
 2. a topic containing all tweets about the trend made in a certain location
 3. a topic containing all tweets about the trend in the location's country, which is used to compare the differences in sentiment between locations. 
 
-#### 2. Process Kafka topics (Kafka / Spark
+#### 2. Process Kafka topics (Kafka / Spark)
 The three Kafka topics in the first stage are then processed in this stage using Spark to create dataframes with a running total of tweets. Using the `textblob` Python module, this stage will create a new Kafka event stream (topic) of coordinates and sentiment levels, which will be published to the frontend at 15-second intervals.
 
 #### 3. Front-end visualization (to-do)

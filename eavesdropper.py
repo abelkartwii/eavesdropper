@@ -2,15 +2,35 @@ import sys
 import json
 import afinn
 import tweepy
+import time
 import kafkaProducer
 # from pykafka import KafkaClient, Producer, Cluster, Broker
 from tweepy import OAuthHandler, Stream, StreamListener
+from geopy.geocoders import Nominatim
+from country_bounding_boxes import country_subunits_containing_point
+
+# geolocator object to find locations
+geolocator = Nominatim(user_agent = "eavesdropper")
 
 class Eavesdropper(StreamListener):
-    def __init__(self, topic):
+    def __init__(self, topic, location):
+        """
+        Initializes coordinates and bounding boxes for the specified 
+        location, as well as creating a Kafka producer.
+        """
+
         self.topic = topic
         print(f"Creating a Kafka topic for {topic}...")
         self.producer = kafkaProducer
+
+        # finds lat/long of location
+        self.location = geolocator.geocode(str(location))
+        self.longitude = self.location.longitude
+        self.latitude = self.location.latitude
+
+        # finds country and bounding box of location based on long/lat
+        self.country = [c.name for c in country_subunits_containing_point(self.longitude, self.latitude)][0] # returns a string "Country"
+        self.countrybox = [c.bbox for c in country_subunits_containing_point(self.longitude, self.latitude)] # returns tuple with bounds
 
     """
     def __init__(self, topic):
@@ -28,8 +48,9 @@ class Eavesdropper(StreamListener):
         json_data = json.loads(data)
         print(json_data['text'])
 
+        # coordinates
         try json_data.get['coordinates']:
-            self.producer.send("eavesdropper", json_data.encode('utf-8'))
+            self.producer.send("eavesdropper_coordinates", json_data.encode('utf-8'))
             # tweet_data = {'created_at' : json_data['created_at'],
             #              'expanded_url' : json_data['entities']['urls'][0]['expanded_url']}
             # data = json.dumps(tweet_data)
@@ -38,7 +59,7 @@ class Eavesdropper(StreamListener):
             return True
 
         except KeyError:
-            print("Key error -- no data detected")
+            print("Key error -- no coordinates were detected")
             return False
 
         except Exception:
@@ -47,6 +68,18 @@ class Eavesdropper(StreamListener):
     
     def on_status(self, status):
         print(status.text)
+        return True
+
+    def on_limit(self, status):
+        """
+        Once requests exceed the limit set by the Twitter API,
+        pauses the app for a minute before resuming.
+        """
+        print("Rate limit exceeded!")
+        print("Waiting for a minute...")
+        time.sleep(60)
+        print("Resuming!")
+        return True
 
     def on_error(self, status):
         if status == 420:
@@ -56,8 +89,3 @@ class Eavesdropper(StreamListener):
     def on_exception(self, status):
         print(status)
         return True
-
-"""
-    def on_connect(self):
-        print("Connected to Twitter!")
-"""

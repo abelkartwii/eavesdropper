@@ -1,4 +1,5 @@
 __pycache__/
+logs/
 workspace.code-workspace
 *.py[cod]
 *$py.class
